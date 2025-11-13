@@ -15,10 +15,10 @@ Sistema web completo para gestionar reservas de lavado de carros con confirmaci�
 
 ## 🎯 Servicios Disponibles
 
-1. **Lavado Express** - $10,000 (20 minutos)
-2. **Lavado Básico** - $15,000 (30 minutos)
-3. **Lavado Completo** - $30,000 (60 minutos) ⭐
-4. **Lavado Premium** - $50,000 (90 minutos)
+1. **Lavado Express** - ₡5,000 (20 minutos)
+2. **Lavado Básico** - ₡8,000 (30 minutos)
+3. **Lavado Completo** - ₡15,000 (60 minutos) ⭐
+4. **Lavado Premium** - ₡25,000 (90 minutos)
 
 ## 🚀 Configuración
 
@@ -89,7 +89,7 @@ Edita las variables CSS en `styles.css`:
 
 En `index.html`, busca las tarjetas de servicios y edita:
 - `data-servicio`: Identificador
-- `data-precio`: Precio en COP
+- `data-precio`: Precio en colones (₡)
 - `data-duracion`: Duración en minutos
 
 ## 📄 Licencia

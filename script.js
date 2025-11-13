@@ -125,17 +125,17 @@ function actualizarResumen() {
             </div>
             <div class="detalle">
                 <span>Precio:</span>
-                <span>$${reservaActual.precio.toLocaleString('es-CO')}</span>
+                <span>₡${reservaActual.precio.toLocaleString('es-CR')}</span>
             </div>
             <div class="detalle-precio">
-                Total: $${reservaActual.precio.toLocaleString('es-CO')}
+                Total: ₡${reservaActual.precio.toLocaleString('es-CR')}
             </div>
         `;
         resumen.classList.add('activo');
 
         // Actualizar precio total en el formulario
         document.getElementById('totalPrecio').textContent = 
-            `$${reservaActual.precio.toLocaleString('es-CO')}`;
+            `₡${reservaActual.precio.toLocaleString('es-CR')}`;
     } else {
         resumen.innerHTML = '<p class="placeholder">Selecciona un servicio arriba</p>';
         resumen.classList.remove('activo');
@@ -332,7 +332,7 @@ function enviarReserva(e) {
     }
     
     mensaje += `\n🧼 *Servicio:* ${nombreServicio}\n`;
-    mensaje += `💰 *Precio:* $${reservaActual.precio.toLocaleString('es-CO')}\n`;
+    mensaje += `💰 *Precio:* ₡${reservaActual.precio.toLocaleString('es-CR')}\n`;
     mensaje += `⏱️ *Duración:* ${reservaActual.duracion} minutos\n`;
     mensaje += `\n📅 *Fecha:* ${fechaFormateada}\n`;
     mensaje += `🕐 *Hora:* ${reservaActual.hora}\n`;
