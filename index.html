@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoLavado Premium - Reserva Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-car-wash"></i>
+                <h1>AutoLavado Premium</h1>
+            </div>
+            <nav>
+                <a href="#servicios">Servicios</a>
+                <a href="#reservar">Reservar</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Tu Auto Siempre Impecable</h2>
+            <p>Reserva tu lavado en línea y recibe confirmación por WhatsApp</p>
+            <a href="#reservar" class="btn-primary">Reservar Ahora</a>
+        </div>
+    </section>
+
+    <!-- Servicios Section -->
+    <section id="servicios" class="servicios">
+        <div class="container">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <div class="servicios-grid">
+                <div class="servicio-card" data-servicio="lavado-basico" data-precio="15000" data-duracion="30">
+                    <div class="servicio-icon">
+                        <i class="fas fa-spray-can"></i>
+                    </div>
+                    <h3>Lavado Básico</h3>
+                    <p class="precio">$15,000</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Lavado exterior completo</li>
+                        <li><i class="fas fa-check"></i> Secado manual</li>
+                        <li><i class="fas fa-check"></i> Aspirado básico</li>
+                    </ul>
+                    <p class="duracion"><i class="far fa-clock"></i> 30 minutos</p>
+                    <button class="btn-seleccionar">Seleccionar</button>
+                </div>
+
+                <div class="servicio-card destacado" data-servicio="lavado-completo" data-precio="30000" data-duracion="60">
+                    <div class="badge">Popular</div>
+                    <div class="servicio-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Lavado Completo</h3>
+                    <p class="precio">$30,000</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Todo del Lavado Básico</li>
+                        <li><i class="fas fa-check"></i> Limpieza interior profunda</li>
+                        <li><i class="fas fa-check"></i> Limpieza de tapicería</li>
+                        <li><i class="fas fa-check"></i> Encerado express</li>
+                    </ul>
+                    <p class="duracion"><i class="far fa-clock"></i> 60 minutos</p>
+                    <button class="btn-seleccionar">Seleccionar</button>
+                </div>
+
+                <div class="servicio-card" data-servicio="lavado-premium" data-precio="50000" data-duracion="90">
+                    <div class="servicio-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Lavado Premium</h3>
+                    <p class="precio">$50,000</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Todo del Lavado Completo</li>
+                        <li><i class="fas fa-check"></i> Pulido de carrocería</li>
+                        <li><i class="fas fa-check"></i> Limpieza de motor</li>
+                        <li><i class="fas fa-check"></i> Tratamiento de cuero</li>
+                        <li><i class="fas fa-check"></i> Perfumado premium</li>
+                    </ul>
+                    <p class="duracion"><i class="far fa-clock"></i> 90 minutos</p>
+                    <button class="btn-seleccionar">Seleccionar</button>
+                </div>
+
+                <div class="servicio-card" data-servicio="lavado-express" data-precio="10000" data-duracion="20">
+                    <div class="servicio-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lavado Express</h3>
+                    <p class="precio">$10,000</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Lavado rápido exterior</li>
+                        <li><i class="fas fa-check"></i> Secado automático</li>
+                        <li><i class="fas fa-check"></i> Ideal para poco tiempo</li>
+                    </ul>
+                    <p class="duracion"><i class="far fa-clock"></i> 20 minutos</p>
+                    <button class="btn-seleccionar">Seleccionar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulario de Reserva -->
+    <section id="reservar" class="reservar">
+        <div class="container">
+            <h2 class="section-title">Reserva tu Cita</h2>
+            <div class="reserva-container">
+                <div class="reserva-info">
+                    <h3>Servicio Seleccionado</h3>
+                    <div id="servicio-seleccionado" class="servicio-resumen">
+                        <p class="placeholder">Selecciona un servicio arriba</p>
+                    </div>
+                </div>
+
+                <form id="reservaForm" class="reserva-form">
+                    <div class="form-group">
+                        <label for="nombre">
+                            <i class="fas fa-user"></i> Nombre Completo *
+                        </label>
+                        <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">
+                            <i class="fab fa-whatsapp"></i> Teléfono (WhatsApp) *
+                        </label>
+                        <input type="tel" id="telefono" name="telefono" required placeholder="+57 300 123 4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="email" name="email" placeholder="tu@email.com">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha">
+                                <i class="fas fa-calendar"></i> Fecha *
+                            </label>
+                            <input type="date" id="fecha" name="fecha" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hora">
+                                <i class="fas fa-clock"></i> Hora *
+                            </label>
+                            <select id="hora" name="hora" required>
+                                <option value="">Seleccionar hora</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vehiculo">
+                            <i class="fas fa-car-side"></i> Marca y Modelo del Vehículo *
+                        </label>
+                        <input type="text" id="vehiculo" name="vehiculo" required placeholder="Ej: Toyota Corolla 2020">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="placa">
+                            <i class="fas fa-id-card"></i> Placa
+                        </label>
+                        <input type="text" id="placa" name="placa" placeholder="ABC123">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comentarios">
+                            <i class="fas fa-comment"></i> Comentarios Adicionales
+                        </label>
+                        <textarea id="comentarios" name="comentarios" rows="3" placeholder="Alguna solicitud especial..."></textarea>
+                    </div>
+
+                    <div class="total-precio">
+                        <h3>Total a Pagar: <span id="totalPrecio">$0</span></h3>
+                    </div>
+
+                    <button type="submit" class="btn-reservar">
+                        <i class="fab fa-whatsapp"></i> Confirmar Reserva por WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="contacto">
+        <div class="container">
+            <h2 class="section-title">Contáctanos</h2>
+            <div class="contacto-grid">
+                <div class="contacto-item">
+                    <i class="fas fa-phone"></i>
+                    <h4>Teléfono</h4>
+                    <p>72255624</p>
+                </div>
+                <div class="contacto-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>Dirección</h4>
+                    <p>Calle 123 #45-67, Bogotá</p>
+                </div>
+                <div class="contacto-item">
+                    <i class="fas fa-clock"></i>
+                    <h4>Horario</h4>
+                    <p>Lun - Sáb: 8:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AutoLavado Premium. Todos los derechos reservados.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
