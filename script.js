@@ -1,6 +1,6 @@
 // Configuración global
 const CONFIG = {
-    whatsappNumber: '72255624', // Tu número de WhatsApp (formato: código país + número sin +)
+    whatsappNumber: '50672255624', // Tu número de WhatsApp (formato: código país + número sin +)
     horaInicio: 8, // 8 AM
     horaFin: 18, // 6 PM
     intervaloMinutos: 30,
