@@ -543,7 +543,7 @@ function mostrarPanelAdmin() {
     const codigo = prompt('Ingrese el código de administrador:');
     
     // Código simple de admin (puedes cambiarlo)
-    if (codigo === 'admin2025') {
+    if (codigo === 'Villa123.') {
         const reservas = obtenerReservas();
         
         let html = `
