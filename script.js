@@ -4,7 +4,8 @@ const CONFIG = {
     horaInicio: 8, // 8 AM
     horaFin: 18, // 6 PM
     intervaloMinutos: 30,
-    diasAnticipacion: 30 // Días que se pueden reservar hacia adelante
+    diasAnticipacion: 30, // Días que se pueden reservar hacia adelante
+    capacidadPorHora: 4 // Máximo de reservas por hora
 };
 
 // Estado de la aplicación
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarFechas();
     inicializarHoras();
     configurarEventos();
+    limpiarReservasAntiguas(); // Limpiar reservas pasadas
 });
 
 // Configurar todos los event listeners
@@ -202,25 +204,39 @@ function actualizarHorasDisponibles() {
     const fechaReserva = new Date(fechaSeleccionada + 'T00:00:00');
     const hoy = new Date();
     
-    // Si es hoy, filtrar horas pasadas
-    if (fechaReserva.toDateString() === hoy.toDateString()) {
-        const horaActual = hoy.getHours();
-        const minutosActuales = hoy.getMinutes();
-        
-        Array.from(selectHora.options).forEach(option => {
-            if (option.value) {
-                const [hora, minutos] = option.value.split(':').map(Number);
-                const esPasada = hora < horaActual || 
+    // Obtener reservas confirmadas para la fecha seleccionada
+    const reservasDelDia = obtenerReservasPorFecha(fechaSeleccionada);
+    
+    Array.from(selectHora.options).forEach(option => {
+        if (option.value) {
+            const [hora, minutos] = option.value.split(':').map(Number);
+            
+            // Verificar si la hora ya pasó (solo para hoy)
+            let esPasada = false;
+            if (fechaReserva.toDateString() === hoy.toDateString()) {
+                const horaActual = hoy.getHours();
+                const minutosActuales = hoy.getMinutes();
+                esPasada = hora < horaActual || 
                     (hora === horaActual && minutos <= minutosActuales);
+            }
+            
+            // Verificar capacidad para esta hora
+            const reservasEnHora = reservasDelDia.filter(r => r.hora === option.value);
+            const capacidadLlena = reservasEnHora.length >= CONFIG.capacidadPorHora;
+            
+            // Actualizar el texto de la opción si está llena
+            if (capacidadLlena) {
+                option.textContent = `${option.value} (Completo ${reservasEnHora.length}/${CONFIG.capacidadPorHora})`;
+                option.disabled = true;
+            } else if (reservasEnHora.length > 0) {
+                option.textContent = `${option.value} (${reservasEnHora.length}/${CONFIG.capacidadPorHora} reservas)`;
+                option.disabled = esPasada;
+            } else {
+                option.textContent = option.value;
                 option.disabled = esPasada;
             }
-        });
-    } else {
-        // Habilitar todas las opciones para fechas futuras
-        Array.from(selectHora.options).forEach(option => {
-            option.disabled = false;
-        });
-    }
+        }
+    });
 }
 
 // Validar campo individual
@@ -285,6 +301,17 @@ function validarFormulario() {
             esValido = false;
         }
     });
+    
+    // Validar capacidad disponible
+    if (esValido) {
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        
+        if (!verificarCapacidadDisponible(fecha, hora)) {
+            alert('Lo sentimos, esta hora ya está completa. Por favor selecciona otra hora.');
+            return false;
+        }
+    }
     
     return esValido;
 }
@@ -367,12 +394,15 @@ function enviarReserva(e) {
 // Guardar reserva en localStorage
 function guardarReservaLocal() {
     const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
-    reservas.push({
+    const nuevaReserva = {
         ...reservaActual,
         id: Date.now(),
-        fechaCreacion: new Date().toISOString()
-    });
+        fechaCreacion: new Date().toISOString(),
+        estado: 'confirmada' // Estados: confirmada, cancelada
+    };
+    reservas.push(nuevaReserva);
     localStorage.setItem('reservas', JSON.stringify(reservas));
+    return nuevaReserva.id;
 }
 
 // Mostrar mensaje de éxito
@@ -464,5 +494,159 @@ function formatearFechaInput(fecha) {
 
 // Función para obtener reservas guardadas (útil para futuras mejoras)
 function obtenerReservas() {
-    return JSON.parse(localStorage.getItem('reservas') || '[]');
+    return JSON.parse(localStorage.getItem('reservas') || '[]')
+        .filter(r => r.estado === 'confirmada'); // Solo reservas activas
 }
+
+// Obtener reservas por fecha específica
+function obtenerReservasPorFecha(fecha) {
+    return obtenerReservas().filter(r => r.fecha === fecha);
+}
+
+// Verificar capacidad disponible para una fecha y hora
+function verificarCapacidadDisponible(fecha, hora) {
+    const reservasEnHora = obtenerReservasPorFecha(fecha)
+        .filter(r => r.hora === hora);
+    return reservasEnHora.length < CONFIG.capacidadPorHora;
+}
+
+// Cancelar reserva
+function cancelarReserva(idReserva) {
+    const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+    const index = reservas.findIndex(r => r.id === idReserva);
+    
+    if (index !== -1) {
+        reservas[index].estado = 'cancelada';
+        reservas[index].fechaCancelacion = new Date().toISOString();
+        localStorage.setItem('reservas', JSON.stringify(reservas));
+        return true;
+    }
+    return false;
+}
+
+// Limpiar reservas antiguas (más de 30 días)
+function limpiarReservasAntiguas() {
+    const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hace30Dias.getDate() - 30);
+    
+    const reservasActualizadas = reservas.filter(r => {
+        const fechaReserva = new Date(r.fecha + 'T00:00:00');
+        return fechaReserva >= hace30Dias;
+    });
+    
+    localStorage.setItem('reservas', JSON.stringify(reservasActualizadas));
+}
+
+// Panel de administración (acceso con código)
+function mostrarPanelAdmin() {
+    const codigo = prompt('Ingrese el código de administrador:');
+    
+    // Código simple de admin (puedes cambiarlo)
+    if (codigo === 'admin2025') {
+        const reservas = obtenerReservas();
+        
+        let html = `
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; overflow-y: auto; padding: 20px;">
+                <div style="background: white; max-width: 900px; margin: 20px auto; padding: 30px; border-radius: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #4F46E5;">📊 Panel de Administración</h2>
+                        <button onclick="cerrarPanelAdmin()" style="padding: 8px 16px; background: #EF4444; color: white; border: none; border-radius: 8px; cursor: pointer;">✕ Cerrar</button>
+                    </div>
+                    <p><strong>Total de reservas activas:</strong> ${reservas.length}</p>
+                    <p><strong>Capacidad por hora:</strong> ${CONFIG.capacidadPorHora} reservas</p>
+                    <hr style="margin: 20px 0;">
+                    <div style="max-height: 500px; overflow-y: auto;">
+        `;
+        
+        if (reservas.length === 0) {
+            html += '<p style="text-align: center; color: #6B7280; padding: 40px;">No hay reservas activas</p>';
+        } else {
+            // Agrupar por fecha
+            const reservasPorFecha = {};
+            reservas.forEach(r => {
+                if (!reservasPorFecha[r.fecha]) {
+                    reservasPorFecha[r.fecha] = [];
+                }
+                reservasPorFecha[r.fecha].push(r);
+            });
+            
+            Object.keys(reservasPorFecha).sort().forEach(fecha => {
+                const fechaObj = new Date(fecha + 'T00:00:00');
+                const fechaFormateada = fechaObj.toLocaleDateString('es-CR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                html += `<h3 style="color: #4F46E5; margin-top: 20px;">📅 ${fechaFormateada}</h3>`;
+                
+                reservasPorFecha[fecha].sort((a, b) => a.hora.localeCompare(b.hora)).forEach(r => {
+                    const servicioNombre = r.servicio.split('-').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+                    
+                    html += `
+                        <div style="background: #F3F4F6; padding: 15px; margin: 10px 0; border-radius: 10px; border-left: 4px solid #4F46E5;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <p style="margin: 5px 0;"><strong>🕐 ${r.hora}</strong> - ${servicioNombre} (₡${r.precio.toLocaleString('es-CR')})</p>
+                                    <p style="margin: 5px 0; color: #6B7280;">👤 ${r.nombre} | 📱 ${r.telefono}</p>
+                                    <p style="margin: 5px 0; color: #6B7280;">🚙 ${r.vehiculo}${r.placa ? ' | 🔖 ' + r.placa : ''}</p>
+                                    ${r.comentarios ? `<p style="margin: 5px 0; color: #6B7280;">💬 ${r.comentarios}</p>` : ''}
+                                </div>
+                                <button onclick="cancelarReservaAdmin(${r.id})" style="padding: 8px 16px; background: #EF4444; color: white; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap;">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+        
+        html += `
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const panel = document.createElement('div');
+        panel.id = 'panelAdmin';
+        panel.innerHTML = html;
+        document.body.appendChild(panel);
+    } else if (codigo !== null) {
+        alert('Código incorrecto');
+    }
+}
+
+function cerrarPanelAdmin() {
+    const panel = document.getElementById('panelAdmin');
+    if (panel) {
+        document.body.removeChild(panel);
+    }
+}
+
+function cancelarReservaAdmin(idReserva) {
+    if (confirm('¿Está seguro de que desea cancelar esta reserva?')) {
+        if (cancelarReserva(idReserva)) {
+            alert('Reserva cancelada exitosamente');
+            cerrarPanelAdmin();
+            mostrarPanelAdmin();
+            
+            // Actualizar horas disponibles si hay una fecha seleccionada
+            const fechaInput = document.getElementById('fecha');
+            if (fechaInput.value) {
+                actualizarHorasDisponibles();
+            }
+        } else {
+            alert('Error al cancelar la reserva');
+        }
+    }
+}
+
+// Agregar acceso al panel admin con Ctrl+Alt+A
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.altKey && e.key === 'a') {
+        mostrarPanelAdmin();
+    }
+});
